@@ -31,7 +31,7 @@ const cards = [
     },
     bizNumber: 1111111,
     likes: [],
-    user_id: "314653379",
+    user_id: "4235234234mfnjrb2h3vbry23",
   },
   {
     _id: "daslfjhbasfjba123124123",
@@ -132,7 +132,7 @@ const users = [
     },
     isBusiness: true,
     isAdmin: true,
-    user_id: "314653379",
+    user_id: "4235234234mfnjasdasdry23",
   },
 ];
 const verifyToken = (tokenFromClient) => {
