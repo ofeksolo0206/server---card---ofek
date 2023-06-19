@@ -111,13 +111,13 @@ const users = [
   },
   {
     name: {
-      first: "Ofek",
+      first: "Tzach1",
       middle: "",
-      last: "Solomon",
+      last: "Dabush1",
     },
     phone: "055-5555555",
-    email: "ofekifargan3@gmail.com",
-    password: "Ofek0206$",
+    email: "admin1@admin.com",
+    password: "Abc123!",
     address: {
       state: "Haifa",
       country: "Israel",
