@@ -24,7 +24,7 @@ const cards = [
     address: {
       state: "TLV",
       country: "Israerl",
-      street: "Dizingof",
+      street: "hasalom",
       houseNumber: 1,
       city: "Tel Aviv",
       zip: 1312,
@@ -47,10 +47,10 @@ const cards = [
     },
     address: {
       state: "TLV",
-      country: "Israerl",
-      street: "Dizingof",
+      country: "Israel",
+      street: "keren hayesod",
       houseNumber: 2,
-      city: "Tel Aviv",
+      city: "ashdod",
       zip: 1312,
     },
     bizNumber: 222222,
@@ -72,9 +72,9 @@ const cards = [
     address: {
       state: "TLV",
       country: "Israerl",
-      street: "Dizingof",
-      houseNumber: 3,
-      city: "Tel Aviv",
+      street: "hasivim",
+      houseNumber: 72,
+      city: "petah tiqwa",
       zip: 1312,
     },
     bizNumber: 333333,
@@ -131,7 +131,7 @@ const users = [
       alt: "profile image",
     },
     isBusiness: true,
-    isAdmin: true,
+    isAdmin: false,
     user_id: "4235234234mfnjasdasdry23",
   },
 ];
@@ -145,8 +145,8 @@ const verifyToken = (tokenFromClient) => {
 };
 
 app.get("/cards", (req, res) => {
-  //res.status(404).send("Page not found");
-  //setTimeout(() => res.json(cards), 3000);
+  //res.status(404).send("Page not found"); //error
+  //setTimeout(() => res.json(cards), 3000); //loading
   res.json(cards);
 });
 
@@ -172,10 +172,22 @@ app.get("/cards/:cardId", (req, res) => {
   }
 });
 
+function generateBizNumber() {
+  const random = Math.floor(Math.random() * 10_000_000);
+  const card = cards.find((card) => card.bizNumber == random);
+  if (card) generateBizNumber();
+  return random;
+}
+
 app.post("/cards", (req, res) => {
   // Add a new ID to the card object
   const newId = Date.now().toString();
-  const newCardWithId = { ...req.body, _id: newId };
+
+  const newCardWithId = {
+    ...req.body,
+    bizNumber: generateBizNumber(),
+    _id: newId,
+  };
 
   // Add the new card to the cards array
   cards.push(newCardWithId);
@@ -235,7 +247,7 @@ app.delete("/cards/:id", (req, res) => {
 
 app.post("/users/login", (req, res) => {
   console.log(req.body);
-  //zconst tokenFromClient = req.header("x-auth-token");
+  //const tokenFromClient = req.header("x-auth-token");
   // if (tokenFromClient) {
   //   const userData = verifyToken(tokenFromClient);
   //   if (userData) {
@@ -257,7 +269,6 @@ app.post("/users/login", (req, res) => {
 
   // User found, so generate a new token and send it back
   const userDataForToken = {
-    email: user.email,
     isAdmin: user.isAdmin,
     isBusiness: user.isBusiness,
     firstName: user.name.first,
@@ -274,13 +285,37 @@ app.post("/users", (req, res) => {
   res.status(201).send({ message: "User added successfully." });
 });
 
+app.get("/user", (req, res) => {
+  const tokenFromClient = req.header("x-auth-token");
+  if (tokenFromClient) {
+    const userData = verifyToken(tokenFromClient);
+    const user_id = userData.id;
+    let userFullData = users.find((user) => user.user_id == user_id);
+    userFullData = { ...userFullData, password: "" };
+    console.log(userFullData);
+    res.send(userFullData);
+  } else {
+    res.status(401).send("log in first");
+  }
+});
+
+app.put("/users/:id", (req, res) => {
+  const userIndex = users.findIndex((u) => u.user_id === req.params.id);
+  if (userIndex === -1) {
+    res.status(404).send("User not found");
+  } else {
+    const updatedUser = {
+      ...users[userIndex],
+      ...req.body,
+      user_id: req.params.id,
+    };
+    users[userIndex] = updatedUser;
+    res.json(updatedUser);
+  }
+});
+
 const PORT = 8181;
 app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
 
 
 
-
-
-
-
-// https://github.com/TzachLectures/BussinesCardApp/tree/master
